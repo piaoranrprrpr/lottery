@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>抽奖结果查询</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: #f5f5f0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+      color: #1a1a1a;
+    }
+
+    .container {
+      max-width: 480px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .header-tag {
+      display: inline-block;
+      background: #ebebeb;
+      color: #666;
+      font-size: 12px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 1rem;
+      letter-spacing: 0.5px;
+    }
+
+    .intro-text {
+      font-size: 15px;
+      color: #555;
+      line-height: 1.7;
+      margin-bottom: 1.5rem;
+    }
+
+    .card {
+      background: #ffffff;
+      border: 1px solid #e8e8e8;
+      border-radius: 16px;
+      padding: 2rem 1.5rem;
+      margin-top: 1rem;
+    }
+
+    .icon-circle {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.25rem;
+    }
+
+    .icon-circle.win { background: #fff7e0; }
+    .icon-circle.lose { background: #f5f5f5; }
+    .icon-circle.win i { font-size: 36px; color: #e67e00; }
+    .icon-circle.lose i { font-size: 36px; color: #999; }
+
+    .screenshot-alert {
+      background: #fff3cd;
+      border: 2px solid #f0a500;
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      margin: 1.25rem 0 0.5rem;
+      text-align: left;
+    }
+    .screenshot-alert .alert-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 16px;
+      font-weight: 700;
+      color: #a05a00;
+      margin-bottom: 0.5rem;
+    }
+    .screenshot-alert .alert-title i { font-size: 20px; }
+    .screenshot-alert .alert-body {
+      font-size: 14px;
+      color: #7a4500;
+      line-height: 1.75;
+    }
+    .screenshot-alert .alert-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin-top: 0.5rem;
+    }
+    .screenshot-alert .step-num {
+      background: #f0a500;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      min-width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 2px;
+    }
+
+    @keyframes pulse-border {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(240,165,0,0.4); }
+      50% { box-shadow: 0 0 0 8px rgba(240,165,0,0); }
+    }
+    #win-card { animation: pulse-border 2s ease-in-out infinite; border-color: #f0c060; }
+
+    .result-title {
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      color: #1a1a1a;
+    }
+
+    .result-sub {
+      font-size: 15px;
+      color: #555;
+      line-height: 1.8;
+      margin-bottom: 0;
+    }
+
+    .btn-draw {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 32px;
+      font-size: 15px;
+      font-weight: 500;
+      border-radius: 10px;
+      cursor: pointer;
+      border: 1px solid #d0d0d0;
+      background: #ffffff;
+      color: #1a1a1a;
+      transition: background 0.15s, transform 0.1s;
+      font-family: inherit;
+    }
+
+    .btn-draw:hover { background: #f5f5f5; }
+    .btn-draw:active { transform: scale(0.98); }
+    .btn-draw:disabled { opacity: 0.6; cursor: not-allowed; }
+    .btn-draw i { font-size: 18px; }
+
+    #result-area { display: none; margin-top: 1rem; }
+
+    .footer-note {
+      margin-top: 1.5rem;
+      font-size: 12px;
+      color: #aaa;
+      line-height: 1.6;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      body { background: #1a1a1a; color: #f0f0f0; }
+      .card { background: #2a2a2a; border-color: #3a3a3a; }
+      .header-tag { background: #333; color: #aaa; }
+      .intro-text { color: #aaa; }
+      .result-title { color: #f0f0f0; }
+      .result-sub { color: #aaa; }
+      .icon-circle.lose { background: #333; }
+      .icon-circle.win { background: #3a2e00; }
+      .btn-draw { background: #2a2a2a; border-color: #444; color: #f0f0f0; }
+      .btn-draw:hover { background: #333; }
+      .screenshot-alert { background: #3a2e00; border-color: #c8860a; }
+      .screenshot-alert .alert-title { color: #ffc150; }
+      .screenshot-alert .alert-body, .screenshot-alert .alert-step span { color: #e0b060; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <span class="header-tag">研究抽奖结果查询</span>
+  <p class="intro-text">
+    感谢您完成本次问卷！<br>
+    请点击下方按钮查看您的抽奖结果。
+  </p>
+
+  <button class="btn-draw" id="drawBtn" onclick="drawLottery()">
+    <i class="ti ti-gift"></i>
+    查看我的抽奖结果
+  </button>
+
+  <div id="result-area">
+
+    <div class="card" id="win-card" style="display:none;">
+      <div class="icon-circle win">
+        <i class="ti ti-trophy"></i>
+      </div>
+      <p class="result-title">🎉 恭喜您，中奖了！</p>
+      <p class="result-sub">您已成功获得本次研究奖励资格。</p>
+
+      <div class="screenshot-alert">
+        <div class="alert-title">
+          <i class="ti ti-camera"></i>
+          请立即截图保存本页面！
+        </div>
+        <div class="alert-body">
+          我们将在问卷的下一道题中要求您上传本页面截图，以便核实您的中奖资格并进行奖励发放。
+        </div>
+        <div class="alert-step">
+          <span class="step-num">1</span>
+          <span>现在对本页面进行截图</span>
+        </div>
+        <div class="alert-step">
+          <span class="step-num">2</span>
+          <span>保存截图至相册或桌面，不要删除</span>
+        </div>
+        <div class="alert-step">
+          <span class="step-num">3</span>
+          <span>返回问卷，在下一题中上传该截图图片</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="lose-card" style="display:none;">
+      <div class="icon-circle lose">
+        <i class="ti ti-mood-smile"></i>
+      </div>
+      <p class="result-title">很遗憾，未中奖</p>
+      <p class="result-sub">
+        感谢您参与本次研究！<br>
+        您的宝贵意见对我们非常重要，衷心感谢您的支持与配合。
+      </p>
+    </div>
+
+  </div>
+
+  <p class="footer-note">本次抽奖概率为5%，结果由系统随机生成。<br>每位参与者仅可查询一次。</p>
+</div>
+
+<script>
+  var drawn = false;
+  function drawLottery() {
+    if (drawn) return;
+    drawn = true;
+    var btn = document.getElementById('drawBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="ti ti-loader"></i> 抽奖中...';
+    setTimeout(function() {
+      var won = Math.random() < 0.05;
+      document.getElementById('result-area').style.display = 'block';
+      document.getElementById('win-card').style.display = won ? 'block' : 'none';
+      document.getElementById('lose-card').style.display = won ? 'none' : 'block';
+      btn.style.display = 'none';
+    }, 1500);
+  }
+</script>
+
+</body>
+</html>
